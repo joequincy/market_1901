@@ -17,4 +17,26 @@ class Market
   def vendors_that_sell(item)
     vendors.select{|vendor| vendor.inventory.include?(item)}
   end
+
+  def sorted_item_list
+    items = []
+    vendors.each do |vendor|
+      items = items | vendor.inventory.keys
+    end
+    return items.sort
+  end
+
+  def total_inventory
+    inventory = {}
+    @vendors.each do |vendor|
+      vendor.inventory.each do |item,quantity|
+        if inventory.has_key?(item)
+          inventory[item] += quantity
+        else
+          inventory[item] = quantity
+        end
+      end
+    end
+    return inventory
+  end
 end
