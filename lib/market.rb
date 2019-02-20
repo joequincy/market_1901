@@ -15,7 +15,7 @@ class Market
   end
 
   def vendors_that_sell(item)
-    vendors.select{|vendor| vendor.inventory.include?(item)}
+    vendors.select{|vendor| vendor.inventory.has_key?(item)}
   end
 
   def sorted_item_list
@@ -38,5 +38,23 @@ class Market
       end
     end
     return inventory
+  end
+
+  def sell(item, quantity)
+    if total_inventory.has_key?(item) &&
+       total_inventory[item] >= quantity
+      remaining = quantity
+      vendors_that_sell(item).each do |vendor|
+        if vendor.inventory[item] >= remaining
+          vendor.inventory[item] -= remaining
+          return true
+        else
+          remaining -= vendor.inventory[item]
+          vendor.inventory[item] = 0
+        end
+      end
+    else
+      false
+    end
   end
 end
